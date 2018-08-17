@@ -7,8 +7,8 @@ import getTheme from '../../native-base-theme/components';
 import material from '../../native-base-theme/variables/material';
 
 // Redux
-import { connect } from 'react-redux';
-import { getContacts, createContact, loadmoreContacts } from '../../publics/redux/actions/contacts';
+// import { connect } from 'react-redux';
+// import { getContacts, createContact, loadmoreContacts } from '../../publics/redux/actions/contacts';
 
 import HeaderNoBack from '../components/HeaderNoBack';
 
@@ -19,11 +19,16 @@ class Contacts extends Component {
     this.page = 1;
     this.endOfPage = false;
     this.state = {
+      data: [
+        {id:1, name:'Ade Ayu', phone:'085776179376', email:'ade.ayu@gmail.com'},
+        {id:2, name:'Rully Ardiansyah', phone:'085776179376', email:'de.voresyah@gmail.com'},
+        {id:3, name:'Muhammad Riza', phone:'08111111111', email:'m.riza@gmail.com'}
+      ],
       refreshing: false
     }
   }
   componentDidMount() {
-    this.getData();
+    // this.getData();
   }
 
   getData = () => {
@@ -35,20 +40,20 @@ class Contacts extends Component {
     this.props.dispatch(getContacts());
   }
 
-  handleLoadmore = () => {
-    if (!this.endOfPage) {
-      this.page++;
-      this.props.dispatch(loadmoreContacts(this.page))
-      .then(res => {
-        if (res.value.data.length < 10) {
-          this.endOfPage = true;
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    }
-  }
+  // handleLoadmore = () => {
+  //   if (!this.endOfPage) {
+  //     this.page++;
+  //     this.props.dispatch(loadmoreContacts(this.page))
+  //     .then(res => {
+  //       if (res.value.data.length < 10) {
+  //         this.endOfPage = true;
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //     })
+  //   }
+  // }
 
   navigateToCreate = () => {
     this.props.dispatch({
@@ -78,18 +83,18 @@ class Contacts extends Component {
   }
 
   render() {
-    const { data, isLoading } = this.props.contacts;
+    // const { data, isLoading } = this.props.contacts;
     return (
       <StyleProvider style={getTheme(material)}>
         <Container style={styles.container}>
           <HeaderNoBack create={()=>this.props.navigation.navigate("ContactCreate")} />
           <FlatList
-            data={data}
+            data={this.state.data}
             keyExtractor={this._keyExtractor}
             renderItem={this._renderItem}
             refreshing={this.state.refreshing}
-            onRefresh={this.getData}
-            onEndReached={this.handleLoadmore}
+            onRefresh={()=>alert("onRefresh")}
+            onEndReached={()=>alert("onReached")}
             onEndReachedThreshold={0.1}
             getItemLayout={(data, index) => ({
               length: 100,
@@ -125,11 +130,12 @@ class Contacts extends Component {
   )
 }
 
-const mapStateToProps = (state) => ({
-  contacts: state.contacts
-})
+// const mapStateToProps = (state) => ({
+//   contacts: state.contacts
+// })
 
-export default connect(mapStateToProps)(Contacts)
+// export default connect(mapStateToProps)(Contacts)
+export default Contacts;
 
 const styles = StyleSheet.create({
   container: {
