@@ -1,5 +1,9 @@
 const initialState = {
-  data: [],
+  data: [
+    {id:1, name:'Ade Ayu', phone:'085776179376', email:'ade.ayu@gmail.com'},
+    {id:2, name:'Rully Ardiansyah', phone:'085776179376', email:'de.voresyah@gmail.com'},
+    {id:3, name:'Muhammad Riza', phone:'08111111111', email:'m.riza@gmail.com'}
+  ],
   isLoading: false,
   isSuccess: false,
   isError: false
@@ -14,10 +18,9 @@ const contactsReducer = (state = initialState, action) => {
         isError: false,
         isSuccess: false
       };
-    case 'GET_CONTACTS_FULFILLED':
+    case 'GET_CONTACTS':
       return {
         ...state,
-        data: action.payload.data,
         isLoading: false,
         isSuccess: true
       };

@@ -17,8 +17,7 @@ class BtnAdd extends Component {
 		if (this.props.loading == false) {
 			return (
 				<Button block primary iconLeft style={styles.submitBtn} onPress={()=>this.props.onSubmit}>
-					<Icon name='add' />
-					<Text>Add</Text>
+					<Text>Save</Text>
 				</Button>
 			)
 		} else {
@@ -38,22 +37,22 @@ export default class ContactCreate extends Component {
 		return (
 			<StyleProvider style={getTheme(material)}>
 				<Container>
-					<HeaderWithBack navigation={this.props.navigation} title={'Add New Contact'} />
+					<HeaderWithBack navigation={this.props.navigation} title={'Edit Contact'} />
 					<Content>
 						<Form style={styles.formOuter}>
 							<Item floatingLabel style={styles.formInput}>
 								<Label>Name</Label>
-								<Input />
+								<Input value={'Ade Ayu'} />
 							</Item>
 							<Item floatingLabel style={styles.formInput}>
 								<Label>Phone</Label>
-								<Input />
+								<Input value={'085776179376'} />
 							</Item>
 							<Item floatingLabel style={styles.formInput}>
 								<Label>Email</Label>
-								<Input />
+								<Input value={'ade.ayu@gmail.com'} />
 							</Item>
-							<BtnAdd loading={false} onSubmit={()=> {alert('Added!')}} />
+							<BtnAdd loading={false} onSubmit={()=> {alert('Saved!')}} />
 						</Form>
 					</Content>
 				</Container>

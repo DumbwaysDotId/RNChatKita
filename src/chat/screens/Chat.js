@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { StyleSheet, FlatList, TouchableOpacity, Alert, View } from 'react-native';
-import { StyleProvider, Container, List, ListItem, Body, Text, Icon } from 'native-base';
+import { StyleProvider, Container, Fab, List, ListItem, Body, Text, Icon } from 'native-base';
 
 // Theme
 import getTheme from '../../native-base-theme/components';
@@ -8,11 +8,21 @@ import material from '../../native-base-theme/variables/material';
 
 // Redux
 import { connect } from 'react-redux';
-import { getContacts, createContact, loadmoreContacts } from '../../publics/redux/actions/contacts';
+import { getChats } from '../../publics/redux/actions/chat';
 
 import HeaderNoBack from '../components/HeaderNoBack';
 
-class Contacts extends Component {
+class StatusIcon extends Component {
+  render() {
+    if (this.props.status == "online") {
+      return <Icon type='FontAwesome' name='circle' style={styles.onlineIcon} />;
+    } else {
+      return <Icon type='FontAwesome' name='circle' style={styles.offlineIcon} />;
+    }
+  }
+}
+
+class Chat extends Component {
 
   constructor() {
     super();
@@ -32,22 +42,7 @@ class Contacts extends Component {
       this.page = 1;
       this.endOfPage = false;
     }
-    this.props.dispatch(getContacts());
-  }
-
-  handleLoadmore = () => {
-    if (!this.endOfPage) {
-      this.page++;
-      this.props.dispatch(loadmoreContacts(this.page))
-      .then(res => {
-        if (res.value.data.length < 10) {
-          this.endOfPage = true;
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
-    }
+    this.props.dispatch(getChats());
   }
 
   navigateToCreate = () => {
@@ -68,8 +63,8 @@ class Contacts extends Component {
     const vm = this;
 
     Alert.alert(
-      'Delete Contact',
-      'Are you sure want to delete "'+name+'" from contact?',
+      'Delete Chat',
+      'Are you sure want to delete chat with "'+name+'" ?',
       [
         {text: 'Cancel', onPress: () => console.log('Canceled'), style: 'cancel'},
         {text: 'Delete', onPress: () => this.deleteContact(id)},
@@ -78,7 +73,7 @@ class Contacts extends Component {
   }
 
   render() {
-    const { data, isLoading } = this.props.contacts;
+    const { data, isLoading } = this.props.chat;
     return (
       <StyleProvider style={getTheme(material)}>
         <Container style={styles.container}>
@@ -95,7 +90,17 @@ class Contacts extends Component {
               length: 100,
               offset: 100 * index, index
             })}
+            style={{backgroundColor:'#fff'}}
           />
+          <Fab
+            active={true}
+            direction="up"
+            containerStyle={{}}
+            style={styles.chatNew}
+            position="bottomRight"
+            onPress={() => this.props.navigation.navigate('ChatNew')}>
+            <Icon type='FontAwesome' name='comment' />
+          </Fab>
         </Container>
       </StyleProvider>
     );
@@ -106,18 +111,21 @@ class Contacts extends Component {
   _renderItem = ({item}) => (
     <ListItem style={styles.listItem}>
       <TouchableOpacity
-        onPress={() => this.props.navigation.navigate("ContactDetail")}
+        onPress={() => this.props.navigation.navigate("ChatDetail")}
         onLongPress={()=> this.showAlert(item.id, item.name)}
         activeOpacity={0.5}
         style={{flex:1}}
       >
         <View style={styles.itemInner}>
-          <Body style={{flex:0.9}}>
-            <Text>{item.name}</Text>
-            <Text note numberOfLines={1}>{item.phone}</Text>
+          <Body style={{flex:0.7}}>
+            <View style={{flexDirection:'row'}}>
+              <Text>{item.name}</Text>
+              <StatusIcon status={item.status}/>
+            </View>
+            <Text note numberOfLines={1}>{item.last_msg}</Text>
           </Body>
-          <View style={styles.arrowIcon}>
-            <Icon name='ios-arrow-forward' style={styles.iconColor} />
+          <View style={{flex:0.3}}>
+            <Text style={styles.infoDate}>{item.date}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -126,10 +134,10 @@ class Contacts extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  contacts: state.contacts
+  chat: state.chat
 })
 
-export default connect(mapStateToProps)(Contacts)
+export default connect(mapStateToProps)(Chat)
 
 const styles = StyleSheet.create({
   container: {
@@ -143,12 +151,26 @@ const styles = StyleSheet.create({
     flex:1,
     flexDirection:'row'
   },
-  arrowIcon: {
-    flex:0.1,
-    justifyContent:'center',
-    alignItems:'flex-end'
+  onlineIcon: {
+    color:'hsl(141, 71%, 48%)',
+    fontSize: 10,
+    top:6,
+    left:-5
   },
-  iconColor: {
-    color:'#757575'
+  offlineIcon: {
+    color:'#bdbdbd',
+    fontSize: 10,
+    top:6,
+    left:-5
+  },
+  infoDate: {
+    fontSize:13,
+    color:'#616161',
+    alignSelf:'flex-end'
+  },
+  chatNew: {
+    backgroundColor:'#039BE5',
+    alignItems:'center',
+    justifyContent:'center'
   }
 });

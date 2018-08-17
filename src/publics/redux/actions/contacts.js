@@ -2,8 +2,7 @@ import axios from 'axios';
 
 const getContacts = () => {
   return {
-    type: 'GET_CONTACTS',
-    payload: axios.get('http://192.168.0.23:5000/contact?page=1&perpage=10&sort=1')
+    type: 'GET_CONTACTS'
   }
 }
 
